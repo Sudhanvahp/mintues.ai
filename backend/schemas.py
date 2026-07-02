@@ -64,6 +64,7 @@ class RecordingListItem(BaseModel):
     duration_sec: float
     created_at: datetime
     status: str
+    share_token: Optional[str]
 
     class Config:
         from_attributes = True
@@ -77,6 +78,7 @@ class RecordingListItem(BaseModel):
             tags=obj.tags,
             duration_sec=obj.duration_sec or 0.0,
             created_at=obj.created_at,
+            share_token=obj.share_token,
             status=obj.status,
         )
 

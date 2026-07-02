@@ -32,6 +32,7 @@ export interface RecordingListItem {
   duration_sec: number;
   created_at: string;
   status: string;
+  share_token: string | null;
 }
 
 export interface StatusResponse {

@@ -3,6 +3,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useParams } from "next/navigation";
 import { AlignLeft, MessageSquare } from "lucide-react";
 import ReactMarkdown from "react-markdown";
+import { Recording, RecordingListItem } from "@/lib/api";
 
 const BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
@@ -22,7 +23,7 @@ export default function SharedNotePage() {
   const params = useParams();
   const token = params.token as string;
 
-  const [recording, setRecording] = useState<any>(null);
+  const [recording, setRecording] = useState<Recording | null>(null);
   const [tab, setTab] = useState<Tab>("minutes");
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
@@ -32,7 +33,7 @@ export default function SharedNotePage() {
       const res = await fetch(`${BASE}/recordings`);
       if (!res.ok) throw new Error();
       const list = await res.json();
-      const match = list.find((r: any) => r.share_token === token);
+      const match = list.find((r: RecordingListItem) => r.share_token === token);
       if (!match) { setNotFound(true); return; }
       const detail = await fetch(`${BASE}/recordings/${match.id}`);
       setRecording(await detail.json());
@@ -107,7 +108,7 @@ export default function SharedNotePage() {
             </div>
           ) : (
             <div className="space-y-4">
-              {(recording.transcript_json || []).map((seg: any, i: number) => (
+              {(recording.transcript_json || []).map((seg, i) => (
                 <div key={i} className="flex gap-3">
                   <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center flex-shrink-0">
                     <span className="text-xs font-bold text-[#2B7FFF]">

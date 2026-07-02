@@ -1,4 +1,5 @@
 import os
+import traceback
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -42,7 +43,6 @@ def diarize(audio_path: str) -> list[dict]:
         return result
     except Exception as e:
         print(f"[diarization] ERROR: {e} — falling back to single speaker")
-        import traceback
         traceback.print_exc()
         return []
 
