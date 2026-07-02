@@ -1,8 +1,6 @@
 import os
 import uuid
 import secrets
-import asyncio
-from concurrent.futures import ThreadPoolExecutor
 from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form, BackgroundTasks, Query
@@ -18,7 +16,6 @@ from schemas import (
 from services import transcription_service, diarization_service, notes_service
 
 router = APIRouter(prefix="/recordings", tags=["recordings"])
-executor = ThreadPoolExecutor(max_workers=2)
 
 UPLOAD_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "uploads"))
 os.makedirs(UPLOAD_DIR, exist_ok=True)

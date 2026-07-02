@@ -1,13 +1,9 @@
 fastapi
 uvicorn[standard]
 sqlalchemy
-aiofiles
 python-dotenv
 pyannote.audio==3.3.2
 torch
 torchaudio
-ffmpeg-python
-requests
-fpdf2
 python-multipart
 groq

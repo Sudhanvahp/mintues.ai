@@ -10,18 +10,6 @@ class TranscriptSegment(BaseModel):
     end_ms: int
 
 
-class RecordingBase(BaseModel):
-    title: str
-    icon: str = "🌐"
-    tags: List[str] = []
-
-
-class RecordingCreate(BaseModel):
-    context: Optional[str] = None
-    keywords: Optional[str] = None
-    language: Optional[str] = "auto"
-
-
 class RecordingUpdate(BaseModel):
     title: Optional[str] = None
     icon: Optional[str] = None

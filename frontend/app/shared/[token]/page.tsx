@@ -29,8 +29,6 @@ export default function SharedNotePage() {
 
   const load = useCallback(async () => {
     try {
-      // Try to find by share_token — for now we scan all public recordings
-      // In a production setup this would be a dedicated /shared/:token endpoint
       const res = await fetch(`${BASE}/recordings`);
       if (!res.ok) throw new Error();
       const list = await res.json();
