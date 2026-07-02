@@ -1,0 +1,36 @@
+# Environment & secrets
+backend/.env
+*.env
+
+# Database
+backend/*.db
+backend/*.db-shm
+backend/*.db-wal
+
+# Audio uploads
+backend/uploads/
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+env/
+*.egg-info/
+dist/
+build/
+
+# Node
+frontend/node_modules/
+frontend/.next/
+frontend/.env.local
+
+# pyannote / torch model cache
+*.pt
+*.bin
+*.onnx
+
+# OS
+.DS_Store
+Thumbs.db
