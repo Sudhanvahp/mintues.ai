@@ -12,7 +12,7 @@ const config: Config = {
         primary: "#2B7FFF",
       },
       fontFamily: {
-        sans: ["Inter", "sans-serif"],
+        sans: ["Plus Jakarta Sans", "sans-serif"],
       },
       maxWidth: {
         app: "480px",

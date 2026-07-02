@@ -50,7 +50,7 @@ export default function ProcessingPage() {
           </div>
           <button
             onClick={() => router.push("/")}
-            className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100"
+            className="w-9 h-9 flex items-center justify-center rounded-xl bg-gray-100 hover:bg-gray-200 transition-colors"
           >
             <X size={16} className="text-gray-600" />
           </button>
@@ -74,6 +74,11 @@ export default function ProcessingPage() {
             </div>
           ) : (
             <>
+              <div className="text-center">
+                <p className="text-lg font-bold text-gray-900">Processing your recording</p>
+                <p className="text-sm text-gray-400 mt-0.5">AI is working on it now</p>
+              </div>
+
               {/* Steps card */}
               <div className="w-full bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
                 {STEPS.map((step, i) => {

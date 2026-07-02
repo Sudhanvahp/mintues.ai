@@ -54,10 +54,13 @@ export default function RecordPage() {
     setUploading(true);
     try {
       const settings = loadSettings();
+      const language = settings.audioLanguages.length === 1
+        ? settings.audioLanguages[0]
+        : "auto";
       const recording = await api.uploadRecording(blob, {
         context: settings.context,
         keywords: settings.keywords,
-        language: settings.audioLanguage,
+        language,
       });
       router.push(`/processing/${recording.id}`);
     } catch (err) {
@@ -98,7 +101,7 @@ export default function RecordPage() {
           </div>
           <button
             onClick={handleDiscard}
-            className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100"
+            className="w-9 h-9 flex items-center justify-center rounded-xl bg-gray-100 hover:bg-gray-200 transition-colors"
           >
             <X size={16} className="text-gray-600" />
           </button>
@@ -192,7 +195,16 @@ export default function RecordPage() {
                 {isRecording ? "Tap to stop recording..." : "Tap mic to start"}
               </p>
 
-              {error && <p className="text-red-500 text-sm text-center px-4">{error}</p>}
+              {error && (
+                <div className="bg-red-50 border border-red-100 rounded-2xl px-4 py-3 text-left w-full">
+                  <p className="text-red-600 text-sm font-semibold mb-1">Microphone access denied</p>
+                  <ul className="text-red-500 text-xs space-y-1 list-disc list-inside">
+                    <li>Click the lock icon in the address bar → allow Microphone</li>
+                    <li>Windows: Settings → Privacy → Microphone → allow browser</li>
+                    <li>Close Teams, Zoom, or any app using the mic</li>
+                  </ul>
+                </div>
+              )}
             </>
           )}
         </div>
@@ -201,10 +213,10 @@ export default function RecordPage() {
         {!uploading && !stopped && (
           <div className="px-4 pb-10">
             <button
-              className="w-full flex items-center justify-center gap-2 border border-gray-200 rounded-full py-3 text-sm text-gray-500 font-medium"
+              className="w-full flex items-center justify-center gap-2 bg-gray-50 border border-gray-100 rounded-2xl py-3 text-sm text-gray-500 font-medium hover:bg-gray-100 transition-colors"
               onClick={() => setShowModal(true)}
             >
-              <Settings size={16} />
+              <Settings size={16} className="text-gray-400" />
               Prompt &amp; Language
             </button>
           </div>

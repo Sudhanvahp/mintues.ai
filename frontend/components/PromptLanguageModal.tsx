@@ -5,12 +5,13 @@ import { X } from "lucide-react";
 export interface RecordingSettings {
   context: string;
   keywords: string;
-  audioLanguage: string;
+  audioLanguages: string[];
   summaryLanguage: string;
 }
 
 const LANGUAGES = [
   { value: "auto", label: "Auto Detect" },
+  { value: "kn", label: "Kannada" },
   { value: "en", label: "English" },
   { value: "hi", label: "Hindi" },
   { value: "ar", label: "Arabic" },
@@ -27,7 +28,7 @@ const STORAGE_KEY = "minutes_ai_settings";
 const defaultSettings: RecordingSettings = {
   context: "",
   keywords: "",
-  audioLanguage: "auto",
+  audioLanguages: [],
   summaryLanguage: "auto",
 };
 
@@ -94,18 +95,37 @@ export function PromptLanguageModal({ onClose }: Props) {
         />
 
         {/* Audio Language */}
-        <label className="block text-sm font-semibold text-gray-900 mt-4 mb-1.5">
+        <label className="block text-sm font-semibold text-gray-900 mt-4 mb-0.5">
           Audio Language
         </label>
-        <select
-          className="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm outline-none focus:border-[#2B7FFF] bg-white"
-          value={settings.audioLanguage}
-          onChange={(e) => setSettings({ ...settings, audioLanguage: e.target.value })}
-        >
-          {LANGUAGES.map((l) => (
-            <option key={l.value} value={l.value}>{l.label}</option>
-          ))}
-        </select>
+        <p className="text-xs text-gray-400 mb-2">Select all languages spoken in the recording</p>
+        <div className="flex flex-wrap gap-2">
+          {LANGUAGES.filter(l => l.value !== "auto").map((l) => {
+            const selected = settings.audioLanguages.includes(l.value);
+            return (
+              <button
+                key={l.value}
+                type="button"
+                onClick={() => {
+                  const langs = selected
+                    ? settings.audioLanguages.filter((v) => v !== l.value)
+                    : [...settings.audioLanguages, l.value];
+                  setSettings({ ...settings, audioLanguages: langs });
+                }}
+                className={`px-3 py-1.5 rounded-full text-sm font-medium border transition-colors ${
+                  selected
+                    ? "bg-[#2B7FFF] text-white border-[#2B7FFF]"
+                    : "bg-white text-gray-600 border-gray-200 hover:border-[#2B7FFF]"
+                }`}
+              >
+                {l.label}
+              </button>
+            );
+          })}
+        </div>
+        {settings.audioLanguages.length > 1 && (
+          <p className="text-xs text-gray-400 mt-2">Multiple languages selected — auto-detect will be used</p>
+        )}
 
         {/* Summary Language */}
         <label className="block text-sm font-semibold text-gray-900 mt-4 mb-1.5">
