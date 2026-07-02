@@ -1,7 +1,7 @@
 "use client";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { Search, Mic, Plus, MoreHorizontal } from "lucide-react";
+import { Search, Mic, Upload, MoreHorizontal } from "lucide-react";
 import { api, RecordingListItem } from "@/lib/api";
 import { ContextMenu } from "@/components/ContextMenu";
 
@@ -23,6 +23,22 @@ export default function HomePage() {
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
   const [menuOpen, setMenuOpen] = useState<number | null>(null);
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    try {
+      const recording = await api.uploadRecording(file, {});
+      router.push(`/processing/${recording.id}`);
+    } catch {
+      alert("Upload failed. Is the backend running?");
+      setUploading(false);
+    }
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
 
   const load = useCallback(async (q?: string) => {
     try {
@@ -175,24 +191,41 @@ export default function HomePage() {
           )}
         </div>
 
-        {/* Bottom: Record button */}
+        {/* Hidden file input */}
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="video/*,audio/*,.mp4,.mov,.avi,.mkv,.m4v,.wmv,.mp3,.wav,.m4a"
+          className="hidden"
+          onChange={handleFileUpload}
+        />
+
+        {/* Bottom: Record + Upload buttons */}
         <div className="fixed bottom-0 left-0 right-0 pointer-events-none">
           <div className="w-full max-w-app mx-auto px-5 pb-8 pt-6 bg-gradient-to-t from-white via-white/95 to-transparent pointer-events-auto">
-            <div className="flex items-center gap-3">
-              <button
-                className="flex-1 flex items-center justify-center gap-2.5 bg-[#2B7FFF] text-white font-semibold py-4 rounded-2xl shadow-lg shadow-blue-200 active:scale-[0.98] transition-transform"
-                onClick={() => router.push("/record")}
-              >
-                <Mic size={19} />
-                Record Minutes
-              </button>
-              <button
-                className="w-14 h-14 rounded-2xl bg-[#2B7FFF] flex items-center justify-center shadow-lg shadow-blue-200 active:scale-[0.98] transition-transform"
-                onClick={() => router.push("/record")}
-              >
-                <Plus size={22} className="text-white" />
-              </button>
-            </div>
+            {uploading ? (
+              <div className="flex items-center justify-center gap-3 bg-gray-50 border border-gray-100 rounded-2xl py-4">
+                <div className="w-5 h-5 border-2 border-[#2B7FFF] border-t-transparent rounded-full animate-spin" />
+                <span className="text-sm font-medium text-gray-600">Uploading file...</span>
+              </div>
+            ) : (
+              <div className="flex items-center gap-3">
+                <button
+                  className="flex-1 flex items-center justify-center gap-2.5 bg-[#2B7FFF] text-white font-semibold py-4 rounded-2xl shadow-lg shadow-blue-200 active:scale-[0.98] transition-transform"
+                  onClick={() => router.push("/record")}
+                >
+                  <Mic size={19} />
+                  Record Minutes
+                </button>
+                <button
+                  className="w-14 h-14 rounded-2xl bg-gray-100 hover:bg-gray-200 flex items-center justify-center active:scale-[0.98] transition-transform"
+                  onClick={() => fileInputRef.current?.click()}
+                  title="Upload video or audio"
+                >
+                  <Upload size={20} className="text-gray-600" />
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>

@@ -1,7 +1,24 @@
 import os
 import uuid
 import secrets
+import subprocess
 from typing import Optional
+
+VIDEO_EXTENSIONS = {".mp4", ".mov", ".avi", ".mkv", ".m4v", ".wmv", ".flv", ".3gp"}
+
+def extract_audio_from_video(video_path: str) -> str:
+    """Extract audio from video file, return path to WAV file."""
+    wav_path = os.path.splitext(video_path)[0] + "_audio.wav"
+    try:
+        import imageio_ffmpeg
+        ffmpeg_exe = imageio_ffmpeg.get_ffmpeg_exe()
+    except Exception:
+        ffmpeg_exe = "ffmpeg"
+    subprocess.run(
+        [ffmpeg_exe, "-i", video_path, "-ar", "16000", "-ac", "1", "-f", "wav", wav_path, "-y"],
+        check=True, capture_output=True,
+    )
+    return wav_path
 
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form, BackgroundTasks, Query
 from fastapi.responses import FileResponse, StreamingResponse
@@ -86,6 +103,9 @@ def process_recording(
     try:
         # Step 1: Processing Audio (0–15%)
         update("Processing Audio", 5)
+        ext = os.path.splitext(audio_path)[1].lower()
+        if ext in VIDEO_EXTENSIONS:
+            audio_path = extract_audio_from_video(audio_path)
         duration = transcription_service.get_audio_duration(audio_path)
         update("Processing Audio", 15)
 
